@@ -1,16 +1,16 @@
-plot.cv.glmFraud <- function (object, show_legend = TRUE)
+plot.cv.glmFraud <- function (x, show_legend = TRUE)
 {
   # check inputs
-  if (missing(object))
-    stop("argument 'object' is missing, with no default")
-  if (class(object) != "cv.glmFraud")
-    stop("argument 'object' must be of class 'cv.glmFraud'")
+  if (missing(x))
+    stop("argument 'x' is missing, with no default")
+  if (class(x) != "cv.glmFraud")
+    stop("argument 'x' must be of class 'cv.glmFraud'")
 
   # plot estimated regression parameters versus log(lambda_path)
-  lambda_path    <- object$lambda_path
-  coef_mat       <- object$coef_mat
-  variable_names <- object$variable_names
-  intercept_flag <- object$intercept_flag
+  lambda_path    <- x$lambda_path
+  coef_mat       <- x$coef_mat
+  variable_names <- x$variable_names
+  intercept_flag <- x$intercept_flag
 
   if (intercept_flag == 1)
     coef_mat <- coef_mat[, -1]

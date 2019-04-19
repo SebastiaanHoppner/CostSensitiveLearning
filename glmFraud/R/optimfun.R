@@ -1,9 +1,9 @@
-optimfun <- function (start, intercept_flag, Y, X, Yname, amounts, fixed_cost, lambda, options)
+optimfun <- function (start, intercept_flag, Y, X, amounts, fixed_cost, lambda, options)
 {
+  # solve optimization problem by using nloptr
   if (options$print_level > 0)
     cat("\n(4) Search for optimal regression parameters...\n\n")
 
-  # solve optimization problem by using nloptr
   fit <- nloptr(x0             = start,
                 eval_f         = objectivefun,
                 eval_grad_f    = gradientfun,
@@ -18,12 +18,15 @@ optimfun <- function (start, intercept_flag, Y, X, Yname, amounts, fixed_cost, l
                   maxeval     = options$maxeval,
                   ftol_rel    = options$ftol_rel,
                   xtol_rel    = options$xtol_rel,
-                  ranseed     = options$seed,
                   print_level = ifelse(options$print_level == 2, 3, options$print_level)
                 ))
+  names(fit$solution) <- names(start)
 
   # estimate standard errors of regression parameters (if required)
+  std_errors <- NA
   if (options$std_errors == TRUE) {
+    if (options$print_level > 0)
+      cat("\n(5) Estimate standard errors... \n")
     hessian <- try(optimHess(par            = fit$solution,
                              fn             = objectivefun,
                              gr             = gradientfun,
@@ -32,39 +35,22 @@ optimfun <- function (start, intercept_flag, Y, X, Yname, amounts, fixed_cost, l
                              X              = X,
                              amounts        = amounts,
                              fixed_cost     = fixed_cost,
-                             lambda         = lambda),
-                   silent = FALSE)
-    if (class(hessian) == "try-error") {
+                             lambda         = lambda))
+    cov_mat <- try(solve(hessian))
+    std_errors <- try(sqrt(diag(cov_mat)))
+    if (class(hessian) == "try-error" |
+        class(cov_mat) == "try-error" |
+        class(std_errors) == "try-error")
       std_errors <- NA
-    } else {
-      cov_mat <- try(solve(hessian), silent = FALSE)
-      if (class(cov_mat) == "try-error") {
-        std_errors <- NA
-      } else {
-        std_errors <- try(sqrt(diag(cov_mat)), silent = FALSE)
-        if (class(std_errors) == "try-error")
-          std_errors <- NA
-      }
-    }
-  } else {
-    std_errors <- NA
   }
 
-  # derive non-zero regression parameters
-  significant_variables <- colnames(X)[which(abs(fit$solution) > options$xtol_rel)]
-  significant_variables[which(significant_variables == "(Intercept)")] <- "1"
-  significant_formula <- as.formula(paste(Yname, "~", paste(significant_variables, collapse = " + ")),
-                                    env = NULL)
-
   # output
-  output <- list(fitted_values         = as.numeric( 1 / (1 + exp(-fit$solution %*% t(X))) ),
-                 objective             = fit$objective,
-                 coefficients          = fit$solution,
-                 std_errors            = std_errors,
-                 significant_variables = setdiff(significant_variables, "1"),
-                 significant_formula   = significant_formula,
-                 diagnostics           = list(status     = fit$status,
-                                              message    = fit$message,
-                                              iterations = fit$iterations))
+  output <- list(fitted_values = as.numeric( 1 / (1 + exp(-fit$solution %*% t(X))) ),
+                 objective     = fit$objective,
+                 coefficients  = fit$solution,
+                 std_errors    = std_errors,
+                 diagnostics   = list(status     = fit$status,
+                                      message    = fit$message,
+                                      iterations = fit$iterations))
   return(output)
 }

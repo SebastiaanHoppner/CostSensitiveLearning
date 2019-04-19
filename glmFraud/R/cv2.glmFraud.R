@@ -1,5 +1,5 @@
-cv.glmFraud <- function (formula, data, amounts, fixed_cost, options = list(),
-                         nfolds = 5, nlambda = 100, lambda_max = 1, lambda_min = 1e-5, seed = NULL)
+cv2.glmFraud <- function (formula, data, amounts, fixed_cost, options = list(),
+                          nfolds = 5, nlambda = 100, lambda_max = 1, lambda_min = 1e-5, seed = NULL)
 {
   # start timer
   t_start <- proc.time()
@@ -28,38 +28,8 @@ cv.glmFraud <- function (formula, data, amounts, fixed_cost, options = list(),
     options$start <- coef(logit)
   }
 
-  # create progress bar
-  cat(paste("\n(4) Loop over", nlambda, "lambda values...\n"))
-  pb <- txtProgressBar(min = 0, max = nlambda, style = 3)
-
-  # create lambda sequence
-  lambda_path <- exp(seq(log(lambda_min), log(lambda_max), length.out = nlambda))
-
-  # for-loop over lambda values
-  significant_formula_list <- list()
-  coef_mat <- matrix(NA, nrow = nlambda, ncol = ncol(X))
-  t_start_lambda_loop <- proc.time()
-
-  for (ii in 1:nlambda) {
-    cslogit_lambda <- suppressWarnings(glmFraud(formula     = formula,
-                                                data        = data,
-                                                amounts     = amounts,
-                                                fixed_cost  = fixed_cost,
-                                                lambda      = lambda_path[ii],
-                                                options     = options))
-    significant_formula_list[[ii]] <- cslogit_lambda$significant_formula
-    coef_mat[ii, ] <- cslogit_lambda$coefficients
-    setTxtProgressBar(pb, ii)
-  }
-
-  close(pb)
-  t_end_lambda_loop <- proc.time() - t_start_lambda_loop
-  cat(paste0("\nElapsed time: ", round(t_end_lambda_loop[3]/60, 2), " min.\n"))
-
-  variable_names <- attr(cslogit_lambda$terms, "term.labels")
-  intercept_flag <- attr(cslogit_lambda$terms, "intercept")
-  formula_list   <- unique(significant_formula_list)
-  options$start  <- NULL
+  # create lambda sequence (include zero)
+  lambda_path <- c(0, exp(seq(log(lambda_min), log(lambda_max), length.out = nlambda)))
 
   # create folds for cross-validation
   if (!is.null(seed))
@@ -67,17 +37,16 @@ cv.glmFraud <- function (formula, data, amounts, fixed_cost, options = list(),
   folds <- caret::createFolds(y = factor(Y), k = nfolds)
 
   # create progress bar
-  cat(paste("\n(5) Loop over", length(formula_list), "formulas and", nfolds, "folds...\n"))
-  pb <- txtProgressBar(min = 0, max = length(formula_list) * nfolds, style = 3)
+  cat(paste("\n(5) Loop over", nlambda+1, "lambda values and", nfolds, "folds...\n"))
+  pb <- txtProgressBar(min = 0, max = (nlambda+1) * nfolds, style = 3)
   step <- 0
 
   # start looping over formulas and folds
   cv_results <- c()
-  t_start_formula_loop <- proc.time()
 
-  for (FORMULA in formula_list) {
+  for (LAMBDA in lambda_path) {
 
-    results_formula <- c()
+    results_lambda <- c()
     for (k in 1:nfolds) {
 
       # create training & validation set
@@ -88,11 +57,11 @@ cv.glmFraud <- function (formula, data, amounts, fixed_cost, options = list(),
       amounts_valid <- amounts[ folds[[k]]]
 
       # fit on training set
-      cslogit <-suppressWarnings(glmFraud(formula    = FORMULA,
+      cslogit <-suppressWarnings(glmFraud(formula    = formula,
                                           data       = train,
                                           amounts    = amounts_train,
                                           fixed_cost = fixed_cost,
-                                          lambda     = 0,
+                                          lambda     = LAMBDA,
                                           options    = options))
 
       # validate on validation set
@@ -116,20 +85,18 @@ cv.glmFraud <- function (formula, data, amounts, fixed_cost, options = list(),
       cost_metrics <- cost_metrics[, c("average_expected_cost", "expected_cost", "expected_savings")]
 
       perf <- cbind.data.frame(cost_metrics, metrics)
-      results_formula <- rbind.data.frame(results_formula, perf)
+      results_lambda <- rbind.data.frame(results_lambda, perf)
 
       # update progress bar
       step <- step + 1
       setTxtProgressBar(pb, step)
     }
 
-    cv_results <- rbind.data.frame(cv_results, colMeans(results_formula))
+    cv_results <- rbind.data.frame(cv_results, colMeans(results_lambda))
   }
 
   close(pb)
   colnames(cv_results) <- names(perf)
-  t_end_formula_loop <- proc.time() - t_start_formula_loop
-  cat(paste0("\nElapsed time: ", round(t_end_formula_loop[3]/60, 2), " min.\n"))
 
   # end timer
   t_end <- proc.time() - t_start
@@ -137,8 +104,6 @@ cv.glmFraud <- function (formula, data, amounts, fixed_cost, options = list(),
 
   # output
   output <- list(call = call, cv_results = cv_results, lambda_path = lambda_path,
-                 coef_mat = coef_mat, formula_list = formula_list,
-                 variable_names = variable_names, intercept_flag = intercept_flag,
                  time = round(t_end[3], 3))
   class(output) <- "cv.glmFraud"
   return(output)
