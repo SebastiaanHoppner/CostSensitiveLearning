@@ -1,5 +1,25 @@
 optimal_threshold <- function (scores, true_classes, cost_matrix, thresholds)
 {
+  # Find optimal decision threshold
+  # -----------------------------------------------------------------------------------------------
+  # Arguments:
+  #   scores         a vector of predicted probabilities
+  #   true_classes   a vector of true labels; can be either a factor, or in numeric form
+  #   cost_matrix    a matrix of dimension nrow(data) x 2:
+  #                  for each instance, the first/second column contains the cost of
+  #                  correctly/incorrectly predicting the binary class of the instance
+  #   thresholds     sequency of threshold values
+  # -----------------------------------------------------------------------------------------------
+  # Value:
+  #   optimal_threshold returns a list containing the following:
+  #   call                the matched call
+  #   thresholds          the sequency of thresholds supplied
+  #   savings             the savings values matching the supplied theshold
+  #   optimal_threshold   the optimal threshold with the highest savings
+  # -----------------------------------------------------------------------------------------------
+  # Written by Sebastiaan Höppner, 2019
+  # -----------------------------------------------------------------------------------------------
+
   # original call
   call <- match.call()
 
