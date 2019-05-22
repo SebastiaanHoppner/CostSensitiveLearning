@@ -27,7 +27,7 @@ performance <- function (scores, predicted_classes, true_classes)
   #                     Recall       recall
   #                     F1           F1-scores
   #                     AUC          Area under ROC curve; can be NA if HMeasure gives an error
-  #                     AUC_pr       Area under precision-recall curve; can be NA if HMeasure
+  #                     AUC_pr       Area under precision-recall curve; can be NA if pr.curve
   #                                  gives an error
   # -----------------------------------------------------------------------------------------------
   # Written by Sebastiaan Höppner, 2019
