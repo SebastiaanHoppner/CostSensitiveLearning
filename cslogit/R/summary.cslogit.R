@@ -1,16 +1,4 @@
-summary.cslogit <- function (object)
-{
-  # Summarizing cslogit fits
-  # -----------------------------------------------------------------------------------------------
-  # Arguments:
-  #   object   an object of class "cslogit"; a result of a call to the cslogit function
-  # -----------------------------------------------------------------------------------------------
-  # Value:
-  #   summary.cslogit prints a summary of the "cslogit"-object
-  # -----------------------------------------------------------------------------------------------
-  # Written by Sebastiaan Höppner, 2019
-  # -----------------------------------------------------------------------------------------------
-
+summary.cslogit <- function (object, ...) {
   # check inputs
   if (missing(object)) {
     stop("argument 'object' is missing, with no default")
@@ -25,21 +13,16 @@ summary.cslogit <- function (object)
   numeric_variables <- names(which(predictor_variables != "factor"))
   n_factors  <- length(factor_variables)
   n_numerics <- length(numeric_variables)
+  df_coefficients <- data.frame(coefficients = round(object$coefficients, 5))
 
   cat("SETTINGS -------------------------------------------------------------------------------\n")
   cat(paste("  - lambda =", object$lambda, "\n"))
   cat(paste("  - cost matrix (example) = \n"))
   print(object$example_cost_matrix)
-  cat(paste("  - factor variables:\n"))
-  for (i in 1:ceiling(n_factors / 5)) {
-    cat(paste0("      ", paste0(factor_variables[(5*(i-1)+1):min((5*i), n_factors)], collapse = ", "),
-               ifelse(i == ceiling(n_factors / 5), "\n", ",\n")))
-  }
-  cat(paste("  - numeric variables:\n"))
-  for (i in 1:ceiling(n_numerics / 5)) {
-    cat(paste0("      ", paste0(numeric_variables[(5*(i-1)+1):min((5*i), n_numerics)], collapse = ", "),
-               ifelse(i == ceiling(n_numerics / 5), "\n", ",\n")))
-  }
+  cat(paste("  - factor variables:\n      "))
+  cat(paste(factor_variables), sep = "\n      ")
+  cat(paste("  - numeric variables:\n      "))
+  cat(paste(numeric_variables), sep = "\n      ")
   cat("\n")
   cat("OPTIONS --------------------------------------------------------------------------------\n")
   cat(paste("  - algorithm =",   object$options$algorithm,   "\n"))
@@ -60,6 +43,6 @@ summary.cslogit <- function (object)
   cat(paste("  - objective =",  round(object$objective, 8), "\n"))
   cat(paste("  - average expected cost =",  round(object$average_expected_cost, 8), "\n"))
   cat(paste("  - coefficients = \n"))
-  print(round(object$coefficients, 5))
+  print(df_coefficients)
   cat("\n")
 }

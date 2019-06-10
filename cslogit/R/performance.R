@@ -1,38 +1,4 @@
-performance <- function (scores, predicted_classes, true_classes)
-{
-  # Compute classification performance measures
-  # -----------------------------------------------------------------------------------------------
-  # Arguments:
-  #   scores              a vector of predicted probabilities
-  #   predicted_classes   a vector of predicted labels; can be either a factor, or in numeric form
-  #   true_classes        a vector of true labels; can be either a factor, or in numeric form
-  # -----------------------------------------------------------------------------------------------
-  # Value:
-  #   performance returns a list containing the following:
-  #   pr_curve          precision-recall curve; can be NULL if pr.curve gives an error
-  #   confusionmatrix   confusion matrix based on predicted labels and true labels
-  #   metrics           a data frame containing the following classification metrics:
-  #
-  #                     alerts       number of instances predicted as positive
-  #                     alert_rate   fraction of instances predicted as positive
-  #                     TP           number of true positives
-  #                     FP           number of false positives
-  #                     TN           number of true negatives
-  #                     FN           number of false negatives
-  #                     TPR          true positive rate
-  #                     FPR          false positive rate
-  #                     ER           error rate
-  #                     MER          minimum error rate; can be NA if HMeasure gives an error
-  #                     Precision    precision
-  #                     Recall       recall
-  #                     F1           F1-scores
-  #                     AUC          Area under ROC curve; can be NA if HMeasure gives an error
-  #                     AUC_pr       Area under precision-recall curve; can be NA if pr.curve
-  #                                  gives an error
-  # -----------------------------------------------------------------------------------------------
-  # Written by Sebastiaan Höppner, 2019
-  # -----------------------------------------------------------------------------------------------
-
+performance <- function (scores, predicted_classes, true_classes) {
   # check inputs
   if (missing(scores)) {
     stop("argument 'scores' is missing, with no default")

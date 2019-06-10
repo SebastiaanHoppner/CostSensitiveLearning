@@ -1,18 +1,4 @@
-predict.cslogit <- function (object, newdata = NULL)
-{
-  # Predict method for cslogit fits
-  # -----------------------------------------------------------------------------------------------
-  # Arguments:
-  #   object    a fitted object of class "cslogit"
-  #   newdata   optionally, a data frame in which to look for variables with which to predict;
-  #             if omitted, the fitted coefficients are used.
-  # -----------------------------------------------------------------------------------------------
-  # Value:
-  #   predict.cslogit returns a vector of predicted probabilities
-  # -----------------------------------------------------------------------------------------------
-  # Written by Sebastiaan Höppner, 2019
-  # -----------------------------------------------------------------------------------------------
-
+predict.cslogit <- function (object, newdata = NULL, ...) {
   # check inputs
   if (missing(object)) {
     stop("argument 'object' is missing, with no default")

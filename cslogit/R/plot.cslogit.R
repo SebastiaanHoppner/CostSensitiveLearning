@@ -1,27 +1,5 @@
-plot.cslogit <- function (x, which = c("all", "objective", "coefficients"),
-                          show_legend = FALSE, legend_position = NULL)
-{
-  # Plot method for cslogit fits
-  # -----------------------------------------------------------------------------------------------
-  # Arguments:
-  #   x                 a fitted object of class "cslogit"
-  #   which             string indicating which plot to show; available options are
-  #                      "objective": plot objective value versus iteration
-  #                      "coefficients": plot estimated regression parameters versus iteration
-  #                      "all": show both plots
-  #   show_legend       should a legend with the variable names be added to the "coefficients"-plot
-  #                     (default is FALSE)
-  #   legend_position   string indicating the position of the legend; by default it is verified
-  #                     whether "bottomleft" or "topleft" is the best position
-  # -----------------------------------------------------------------------------------------------
-  # Value:
-  #   plot.cslogit plots the evolution of the objective function and regression parameters
-  # -----------------------------------------------------------------------------------------------
-  # Written by Sebastiaan Höppner, 2019
-  # -----------------------------------------------------------------------------------------------
-
+plot.cslogit <- function (x, which = "all", show_legend = FALSE, legend_position = NULL, ...) {
   # check inputs
-  which <- which[1]
   if (missing(x)) {
     stop("argument 'x' is missing, with no default")
   }

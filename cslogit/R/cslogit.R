@@ -1,69 +1,4 @@
-cslogit <- function (formula, data, cost_matrix, lambda, options = list())
-{
-  # Instance-Dependent Cost-Sensitive Logistic Regression
-  # -----------------------------------------------------------------------------------------------
-  # Arguments:
-  #   formula           an object of class "formula": a symbolic description of the model to be
-  #                     fitted; an intercept must be included
-  #   data              a data frame containing the variables in the model
-  #   cost_matrix       a matrix of dimension nrow(data) x 2:
-  #                     for each instance, the first/second column contains the cost of
-  #                     correctly/incorrectly predicting the binary class of the instance
-  #   lambda            value that controls the L1-penalty of the regression coefficients
-  #   options           a list of options that control details of the cslogit algorithm:
-  #
-  #       algorithm     algorithm used by the nloptr function; available algorithms:
-  #                     "SLSQP" = Sequential Least-Squares Quadratic Programming (default)
-  #                     "MMA" = Method of Moving Asymptotes
-  #       maxeval       maximum number of function evaluations (default is 10000)
-  #       ftol_rel      obtain the minimum of the objective function to within a relative tolerance
-  #                     (default is 1e-8)
-  #       xtol_rel      obtain optimal regression coefficients to within a relative tolerance
-  #                     (default is 1e-5)
-  #       start         starting values for the coefficients in the linear predictor;
-  #                     by default a logistic regression model is fitted in order to
-  #                     use the coefficients as starting values
-  #       lb            vector with lower bounds of the coefficients (use -Inf for coefficients
-  #                     without lower bound); by default the intercept is unbounded and remaining
-  #                     coefficients have a lower bound of -max(50, abs(options$start[-1]));
-  #                     if a single number is provided, the vector is initialized as
-  #                     c(-Inf, rep(options$lb, length(options$start) - 1))
-  #       ub            vector with upper bounds of the coefficients (use Inf for coefficients
-  #                     without upper bound); by default the intercept is unbounded and remaining
-  #                     coefficients have an upper bound of max(50, abs(options$start[-1]));
-  #                     if a single number is provided, the vector is initialized as
-  #                     c(Inf, rep(options$ub, length(options$start) - 1))
-  #       check_data    should the data and variables be checked for NA, Inf, -Inf values, etc.
-  #                     (default is TRUE) or not (FALSE)
-  #       print_level   controls how much output is shown during the optimization process;
-  #                     possible values:
-  #                     0             no output
-  #                     1 (default)   show iteration number and value of objective function
-  #                     2             1 + show value of coefficients
-  # -----------------------------------------------------------------------------------------------
-  # Value:
-  #   cslogit returns an object of class "cslogit" which is a list containing the following:
-  #   call                    the matched call
-  #   formula                 the formula supplied
-  #   lambda                  the lambda value supplied
-  #   options                 the list of arguments supplied, with defaults filled in
-  #   terms                   the terms object used
-  #   example_cost_matrix     2x2 cost matrix based on the first class-0 and class-1 instances in
-  #                           the data; used by the summary.cslogit function
-  #   objective_path          the vector containing the objective value for each iteration
-  #   betas_path              the matrix containing the coefficients for each iteration
-  #   fitted_values           the fitted probabilities
-  #   average expected cost   the average expected cost of the solution fitted on the supplied data
-  #   objective               the value of the objective function in the solution
-  #   coefficients            the vector of fitted coefficients
-  #   status                  integer value with the status of the optimization
-  #   message                 character string produced by NLopt and giving additional information
-  #   iterations              the number of iterations that were executed
-  #   time                    the number of seconds passed to execute the cslogit algorithm
-  # -----------------------------------------------------------------------------------------------
-  # Written by Sebastiaan Höppner, 2019
-  # -----------------------------------------------------------------------------------------------
-
+cslogit <- function (formula, data, cost_matrix, lambda, options = list()) {
   # start timer
   t_start <- proc.time()
 
@@ -71,7 +6,7 @@ cslogit <- function (formula, data, cost_matrix, lambda, options = list())
   call <- match.call()
 
   # check inputs
-  check <- check_inputs(formula, data, cost_matrix, lambda, options)
+  check <- checkInputs(formula, data, cost_matrix, lambda, options)
   options <- check$options
 
   # extract response variable and model matrix
@@ -136,7 +71,7 @@ cslogit <- function (formula, data, cost_matrix, lambda, options = list())
     cat("- Search for optimal regression parameters...\n\n")
   }
   fit_reap <- reap(nloptr(x0               = options$start,
-                          eval_f           = sower(objective_gradient_fun),
+                          eval_f           = sower(computeObjectiveGradient),
                           lb               = options$lb,
                           ub               = options$ub,
                           X                = X,
@@ -160,7 +95,7 @@ cslogit <- function (formula, data, cost_matrix, lambda, options = list())
     warning(fit$message) # maxeval was reached
   }
   scores <- as.numeric( 1 / (1 + exp(-fit$solution %*% t(X))) )
-  average_expected_cost <- 2 * mean(cost_matrix * matrix(c(scores, 1 - scores), ncol = 2))
+  average_expected_cost <- fit$objective - lambda * sum(abs(fit$solution[-1]))
 
   # end timer
   t_end <- proc.time() - t_start
@@ -169,13 +104,22 @@ cslogit <- function (formula, data, cost_matrix, lambda, options = list())
   }
 
   # output
-  output <- list(call = call, formula = formula, example_cost_matrix = example_cost_matrix,
-                 lambda = lambda, options = options, terms = check$mt,
-                 objective_path = objective_path, betas_path = betas_path,
-                 fitted_values = scores, average_expected_cost = average_expected_cost,
-                 objective = fit$objective, coefficients = fit$solution,
-                 status = fit$status, message = fit$message, iterations = fit$iterations,
-                 time = round(t_end[3], 3))
+  output <- list(coefficients = fit$solution,
+                 objective = fit$objective,
+                 average_expected_cost = average_expected_cost,
+                 fitted_values = scores,
+                 objective_path = objective_path,
+                 betas_path = betas_path,
+                 status = fit$status,
+                 message = fit$message,
+                 iterations = fit$iterations,
+                 time = round(t_end[3], 3),
+                 call = call,
+                 formula = formula,
+                 lambda = lambda,
+                 options = options,
+                 terms = check$mt,
+                 example_cost_matrix = example_cost_matrix)
   class(output) <- "cslogit"
   return(output)
 }

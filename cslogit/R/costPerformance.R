@@ -1,33 +1,4 @@
-costPerformance <- function (scores, predicted_classes, true_classes, cost_matrix)
-{
-  # Compute cost-related performance measures
-  # -----------------------------------------------------------------------------------------------
-  # Arguments:
-  #   scores              a vector of predicted probabilities
-  #   predicted_classes   a vector of predicted labels; can be either a factor, or in numeric form
-  #   true_classes        a vector of true labels; can be either a factor, or in numeric form
-  #   cost_matrix         a matrix of dimension nrow(data) x 2:
-  #                       for each instance, the first/second column contains the cost of
-  #                       correctly/incorrectly predicting the binary class of the instance
-  # -----------------------------------------------------------------------------------------------
-  # Value:
-  #   costPerformance returns a data frame containing the following:
-  #      total fraud amount
-  #      detected fraud amount
-  #      detected fraud amount ratio
-  #      cost no model
-  #      minimum cost
-  #      maximum savings
-  #      total cost
-  #      average cost
-  #      expected total cost
-  #      average expected cost
-  #      savings
-  #      expected savings
-  # -----------------------------------------------------------------------------------------------
-  # Written by Sebastiaan Höppner, 2019
-  # -----------------------------------------------------------------------------------------------
-
+costPerformance <- function (scores, predicted_classes, true_classes, cost_matrix) {
   # check inputs
   if (missing(scores)) {
     stop("argument 'scores' is missing, with no default")

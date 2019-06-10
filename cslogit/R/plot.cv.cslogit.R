@@ -1,16 +1,4 @@
-plot.cv.cslogit <- function (x)
-{
-  # Plot results from cross-validation with cslogit
-  # -----------------------------------------------------------------------------------------------
-  # Arguments:
-  #   x   an object of class "cv.cslogit"
-  # -----------------------------------------------------------------------------------------------
-  # Value:
-  #   plot.cv.cslogit creates boxplots of the cross-validation results for a lambda sequence
-  # -----------------------------------------------------------------------------------------------
-  # Written by Sebastiaan Höppner, 2019
-  # -----------------------------------------------------------------------------------------------
-
+plot.cv.cslogit <- function (x, ...) {
   # check inputs
   if (missing(x)) {
     stop("argument 'x' is missing, with no default")
