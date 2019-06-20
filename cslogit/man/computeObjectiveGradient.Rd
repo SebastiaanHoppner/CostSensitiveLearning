@@ -6,15 +6,15 @@
 
 \description{Returns the value of the objective function and its gradient, used by \code{\link{cslogit}}. The objection function of the \code{cslogit} algorithm is the lasso penalized average expected cost.}
 
-\usage{computeObjectiveGradient(betas, X, tX, cost_matrix, diff_cost_matrix, nrowX, lambda)}
+\usage{computeObjectiveGradient(betas, X, tX, cost_matrix, diff_costs, nrowX, lambda)}
 
 \arguments{
 \item{betas}{vector with coefficients for the logistic regression model.}
 \item{X}{model matrix.}
 \item{tX}{transpose of model matrix.}
 \item{cost_matrix}{a matrix of dimension \code{nrow(data)} x 2. For each instance, the first/second column contains the cost of predicting the binary class of the instance as positive/negative}
-\item{diff_cost_matrix}{matrix used for calculting the gradient: \cr
-\code{1/NROW(X) * (cost_matrix[, 1] - cost_matrix[, 2])}.}
+\item{diff_costs}{vector used for calculting the gradient: \cr
+\code{(cost_matrix[, 1] - cost_matrix[, 2]) / NROW(X)}.}
 \item{nrowX}{number of rows of the model matrix.}
 \item{lambda}{value that controls the lasso penalty of the regression coefficients.}
 }

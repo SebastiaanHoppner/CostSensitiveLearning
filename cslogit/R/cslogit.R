@@ -70,17 +70,17 @@ cslogit <- function (formula, data, cost_matrix, lambda, options = list()) {
   if (options$print_level > 0) {
     cat("- Search for optimal regression parameters...\n\n")
   }
-  fit_reap <- reap(nloptr(x0               = options$start,
-                          eval_f           = sower(computeObjectiveGradient),
-                          lb               = options$lb,
-                          ub               = options$ub,
-                          X                = X,
-                          tX               = t(X),
-                          cost_matrix      = cost_matrix,
-                          diff_cost_matrix = (cost_matrix[, 1] - cost_matrix[, 2]) / NROW(X),
-                          nrowX            = NROW(X),
-                          lambda           = lambda,
-                          opts             = list(
+  fit_reap <- reap(nloptr(x0          = options$start,
+                          eval_f      = sower(computeObjectiveGradient),
+                          lb          = options$lb,
+                          ub          = options$ub,
+                          X           = X,
+                          tX          = t(X),
+                          cost_matrix = cost_matrix,
+                          diff_costs  = (cost_matrix[, 1] - cost_matrix[, 2]) / NROW(X),
+                          nrowX       = NROW(X),
+                          lambda      = lambda,
+                          opts        = list(
                             algorithm   = paste0("NLOPT_LD_", options$algorithm),
                             maxeval     = options$maxeval,
                             ftol_rel    = options$ftol_rel,
@@ -95,7 +95,7 @@ cslogit <- function (formula, data, cost_matrix, lambda, options = list()) {
   if (fit$status == 5) {
     warning(fit$message) # maxeval was reached
   }
-  scores <- as.numeric( 1 / (1 + exp(-fit$solution %*% t(X))) )
+  scores <- 1 / (1 + exp(-as.numeric(fit$solution %*% t(X))))
   average_expected_cost <- fit$objective - lambda * sum(abs(fit$solution[-1]))
 
   # end timer
@@ -105,22 +105,22 @@ cslogit <- function (formula, data, cost_matrix, lambda, options = list()) {
   }
 
   # output
-  output <- list(coefficients = fit$solution,
-                 objective = fit$objective,
+  output <- list(coefficients          = fit$solution,
+                 objective             = fit$objective,
                  average_expected_cost = average_expected_cost,
-                 fitted_values = scores,
-                 objective_path = objective_path,
-                 betas_path = betas_path,
-                 status = fit$status,
-                 message = fit$message,
-                 iterations = fit$iterations,
-                 time = round(t_end[3], 3),
-                 call = call,
-                 formula = formula,
-                 lambda = lambda,
-                 options = options,
-                 terms = check$mt,
-                 example_cost_matrix = example_cost_matrix)
+                 fitted_values         = scores,
+                 objective_path        = objective_path,
+                 betas_path            = betas_path,
+                 status                = fit$status,
+                 message               = fit$message,
+                 iterations            = fit$iterations,
+                 time                  = round(t_end[3], 3),
+                 call                  = call,
+                 formula               = formula,
+                 lambda                = lambda,
+                 options               = options,
+                 terms                 = check$mt,
+                 example_cost_matrix   = example_cost_matrix)
   class(output) <- "cslogit"
   return(output)
 }
