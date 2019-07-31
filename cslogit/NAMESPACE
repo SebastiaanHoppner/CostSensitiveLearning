@@ -9,8 +9,6 @@ importFrom("utils", "setTxtProgressBar", "txtProgressBar")
 
 export(cslogit)
 export(cv.cslogit)
-export(checkInputs)
-export(computeObjectiveGradient)
 export(summary.cslogit)
 export(predict.cslogit)
 export(plot.cslogit)
