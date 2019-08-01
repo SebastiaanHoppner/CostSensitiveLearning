@@ -11,7 +11,7 @@ cv.cslogit <- function (formula, data, cost_matrix, options = list(),
     stop("argument 'options' must be a list")
   }
   options$print_level <- 1
-  check <- checkInputs(formula, data, cost_matrix, lambda = 0, options)
+  check <- checkInputsCSlogit(formula, data, cost_matrix, lambda = 0, options)
   options <- check$options
   options$print_level <- 0
   options$check_data <- FALSE

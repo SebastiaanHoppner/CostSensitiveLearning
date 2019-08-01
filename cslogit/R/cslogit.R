@@ -6,7 +6,7 @@ cslogit <- function (formula, data, cost_matrix, lambda, options = list()) {
   call <- match.call()
 
   # check inputs
-  check <- checkInputs(formula, data, cost_matrix, lambda, options)
+  check <- checkInputsCSlogit(formula, data, cost_matrix, lambda, options)
   options <- check$options
 
   # extract response variable and model matrix
