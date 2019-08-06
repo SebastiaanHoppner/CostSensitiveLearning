@@ -1,0 +1,14 @@
+Package: csboost
+Type: Package
+Title: Instance-dependent cost-sensitive extreme gradient boosting
+Version: 1.0.0
+Author: Sebastiaan Höppner
+Maintainer: Sebastiaan Höppner <sebastiaan.hoppner@gmail.com>
+Description: Instance-dependent cost-sensitive extreme gradient boosting.
+Depends: R (>= 3.2.0)
+Imports: hmeasure, xgboost
+License: GPL (>= 2)
+LazyLoad: yes
+Encoding: UTF-8
+LazyData: true
+NeedsCompilation: yes

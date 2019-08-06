@@ -1,0 +1,13 @@
+importFrom("graphics", "abline", "legend", "lines", "plot")
+importFrom("hmeasure", "relabel")
+importFrom("stats", "model.frame", "model.matrix", "model.response", "predict")
+importFrom("xgboost", "xgb.DMatrix", "xgb.train")
+
+export(csboost)
+export(plot.csboost)
+export(predict.csboost)
+export(summary.csboost)
+
+S3method(plot, csboost)
+S3method(predict, csboost)
+S3method(summary, csboost)
