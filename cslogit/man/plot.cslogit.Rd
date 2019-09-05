@@ -30,7 +30,7 @@
 \author{Sebastiaan Höppner}
 
 
-\seealso{\code{\link{cslogit}}, \code{\link{predict}}}
+\seealso{\code{\link{cslogit}}, \code{\link{plot}}}
 
 \examples{
 # Provide an example (TODO).
