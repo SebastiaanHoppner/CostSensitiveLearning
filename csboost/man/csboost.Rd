@@ -2,9 +2,9 @@
 
 \alias{csboost}
 
-\title{Cost-sensitive xgboost}
+\title{Instance-dependent cost-sensitive extreme gradient boosting}
 
-\description{Cost-sensitive eXtreme Gradient Boosting.}
+\description{Instance-dependent cost-sensitive extreme gradient boosting.}
 
 \usage{csboost(formula, train, test = NULL,
         cost_matrix_train, cost_matrix_test = NULL,
