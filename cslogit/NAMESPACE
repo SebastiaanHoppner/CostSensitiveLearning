@@ -1,5 +1,4 @@
 importFrom("caret", "createFolds")
-importFrom("DescTools", "AUC")
 importFrom("graphics", "abline", "boxplot", "legend", "lines", "par", "plot", "points", "polygon", "segments", "text")
 importFrom("grDevices", "rainbow")
 importFrom("hmeasure", "HMeasure", "relabel")
@@ -17,7 +16,6 @@ export(plot.cv.cslogit)
 export(findOptimalThreshold)
 export(costPerformance)
 export(performance)
-export(liftcurve)
 
 S3method(plot, cslogit)
 S3method(plot, cv.cslogit)

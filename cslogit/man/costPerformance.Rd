@@ -43,7 +43,7 @@ expected savings
 \author{Sebastiaan Höppner}
 
 
-\seealso{\code{\link{performance}}}
+\seealso{\code{\link{performance}}, \code{\link{cslogit}}}
 
 \examples{
 # Provide an example (TODO).

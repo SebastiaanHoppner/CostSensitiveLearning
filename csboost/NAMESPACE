@@ -1,7 +1,7 @@
 importFrom("graphics", "abline", "legend", "lines", "plot")
 importFrom("hmeasure", "relabel")
 importFrom("stats", "model.frame", "model.matrix", "model.response", "predict")
-importFrom("xgboost", "xgb.DMatrix", "xgb.train")
+importFrom("xgboost", "getinfo", "xgb.DMatrix", "xgb.train")
 
 export(csboost)
 export(plot.csboost)

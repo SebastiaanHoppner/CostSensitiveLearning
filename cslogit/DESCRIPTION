@@ -6,7 +6,7 @@ Author: Sebastiaan Höppner
 Maintainer: Sebastiaan Höppner <sebastiaan.hoppner@gmail.com>
 Description: Instance-dependent cost-sensitive logistic model. This method introduces instance-dependent costs into a lasso-regularized logistic regression by changing the objective function of the model to one that is cost-sensitive.
 Depends: R (>= 3.2.0)
-Imports: caret, DescTools, hmeasure, nloptr, PRROC
+Imports: caret, hmeasure, nloptr, PRROC
 License: GPL (>= 2)
 LazyLoad: yes
 Encoding: UTF-8

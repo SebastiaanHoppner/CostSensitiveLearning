@@ -22,7 +22,7 @@
 \author{Sebastiaan Höppner}
 
 
-\seealso{\code{\link{csboost}}, \code{\link{predict}}}
+\seealso{\code{\link{csboost}}, \code{\link{plot}}}
 
 \examples{
 # Provide an example (TODO).

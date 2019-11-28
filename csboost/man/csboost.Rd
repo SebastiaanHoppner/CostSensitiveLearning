@@ -53,36 +53,39 @@
 
 \value{
 \code{csboost} returns an object of class "\code{csboost}" which is a list containing the following components:
+\item{call}{the matched call.}
+\item{time}{the number of seconds passed to execute the csboost algorithm.}
 \item{xgbmodel}{an object of class \code{xgb.Booster} with the following elements:}
 \itemize{
-  \item \code{handle} a handle (pointer) to the xgboost model in memory.
-  \item \code{raw} a cached memory dump of the xgboost model saved as R's \code{raw} type.
-  \item \code{niter} number of boosting iterations.
-  \item \code{evaluation_log} evaluation history stored as a \code{data.table} with the
+  \item \code{handle} \cr a handle (pointer) to the xgboost model in memory.
+  \item \code{raw} \cr a cached memory dump of the xgboost model saved as R's \code{raw} type.
+  \item \code{niter} \cr number of boosting iterations.
+  \item \code{evaluation_log} \cr evaluation history stored as a \code{data.table} with the
         first column corresponding to iteration number and the rest corresponding to evaluation
         metrics' values.
-  \item \code{call} a function call.
-  \item \code{params} parameters that were passed to the xgboost library.
-  \item \code{callbacks} callback functions that were either automatically assigned or
+  \item \code{call} \cr a function call.
+  \item \code{params} \cr parameters that were passed to the xgboost library.
+  \item \code{callbacks} \cr callback functions that were either automatically assigned or
         explicitly passed.
-  \item \code{best_iteration} iteration number with the best evaluation metric value
+  \item \code{best_iteration} \cr iteration number with the best evaluation metric value
         (only available with early stopping).
   \item \code{best_ntreelimit} the \code{ntreelimit} value corresponding to the best iteration,
         which could further be used in \code{predict} method
         (only available with early stopping).
-  \item \code{best_score} the best evaluation metric value during early stopping.
+  \item \code{best_score} \cr the best evaluation metric value during early stopping.
         (only available with early stopping).
-  \item \code{feature_names} names of the training dataset features
+  \item \code{feature_names} \cr names of the training dataset features
         (only when column names were defined in training data).
-  \item \code{nfeatures} number of features in training data.
+  \item \code{nfeatures} \cr number of features in training data.
 }
-\item{time}{the number of seconds passed to execute the csboost algorithm.}
-\item{call}{the matched call.}
 }
 
 \references{...}
 
 \author{Sebastiaan Höppner}
+
+\seealso{\code{\link{summary.csboost}}, \code{\link{plot.csboost}}, \code{\link{predict.csboost}}}
+
 
 \examples{
 # Provide an example (TODO).
