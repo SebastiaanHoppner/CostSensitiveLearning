@@ -35,10 +35,10 @@ obtain optimal regression coefficients to within a relative tolerance (default i
 starting values for the coefficients in the linear predictor. By default a logistic regression model is fitted in order to use the coefficients as starting values.}
 
 \item{\code{lb} \cr
-vector with lower bounds of the coefficients (use \code{-Inf} for coefficients without lower bound). By default the intercept is unbounded and the other coefficients have a lower bound of \code{-max(50, abs(options$start[-1]))}. If a single number is provided, the vector is initialized as \code{c(Inf, rep(options$lb, length(options$start) - 1))}.}
+vector with lower bounds of the coefficients (use \code{-Inf} for coefficients without lower bound). By default the intercept is unbounded and the other coefficients have a lower bound of \code{-max(50, abs(options$start[-1]))}. If a single number is provided, the vector is initialized as \code{c(-Inf, rep(options$lb, length(options$start) - 1))}.}
 
 \item{\code{ub} \cr
-vector with upper bounds of the coefficients (use \code{Inf} for coefficients without upper bound). By default the intercept is unbounded and the other coefficients have an upper bound of \code{max(50, abs(options$start[-1]))}. If a single number is provided, the vector is initialized as \code{c(-Inf, rep(options$ub, length(options$start) - 1))}.}
+vector with upper bounds of the coefficients (use \code{Inf} for coefficients without upper bound). By default the intercept is unbounded and the other coefficients have an upper bound of \code{max(50, abs(options$start[-1]))}. If a single number is provided, the vector is initialized as \code{c(Inf, rep(options$ub, length(options$start) - 1))}.}
 
 \item{\code{check_data} \cr
 should the data and variables be checked for \code{NA}, \code{Inf}, \code{-Inf} values, etc. (default is \code{TRUE}) or not (\code{FALSE}).}
