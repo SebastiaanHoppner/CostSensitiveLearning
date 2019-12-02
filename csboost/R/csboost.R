@@ -19,12 +19,11 @@ csboost <- function (formula, train, test = NULL,
   labels_train <- hmeasure::relabel(model.response(check$mf_train))
   dtrain <- xgboost::xgb.DMatrix(data = model.matrix(formula, train), label = labels_train)
   watchlist <- list(train = dtrain)
+  dtest <- NULL
   if (!is.null(test)) {
     labels_test <- hmeasure::relabel(model.response(check$mf_test))
     dtest <- xgboost::xgb.DMatrix(data = model.matrix(formula, test), label = labels_test)
     watchlist <- c(watchlist, list(test = dtest))
-  } else {
-    dtest <- NULL
   }
 
   # rearrange cost matrix & define auxilary vectors
@@ -49,17 +48,7 @@ csboost <- function (formula, train, test = NULL,
   # define objective function
   averageExpectedCostObj <- function (scores, dtrain) {
     scores <- 1 / (1 + exp(-scores))
-
     grad <- scores * (1 - scores) * diff_costs_train
-    hess <- (1 - 2 * scores) * grad
-
-    labels <- getinfo(dtrain, "label")
-    i0 <- which(labels == 0)
-    i1 <- which(labels == 1)
-    print(summary(hess[i0]))
-    print(summary(hess[i1]))
-    cat("\n")
-
     if (hessian_type == "exact") {
       hess <- (1 - 2 * scores) * grad
     } else if (hessian_type == "solution1") {
@@ -70,9 +59,6 @@ csboost <- function (formula, train, test = NULL,
     } else if (hessian_type == "constant") {
       hess <- rep(hessian_constant, length(scores))
     }
-    print(summary(hess[i0]))
-    print(summary(hess[i1]))
-    cat("\n\n")
     return(list(grad = grad, hess = hess))
   }
 
@@ -97,11 +83,6 @@ csboost <- function (formula, train, test = NULL,
   params$objective <- averageExpectedCostObj
   params$eval_metric <- expectedSavings
 
-  xgbmodel <- xgboost::xgb.train(params, dtrain, nrounds, watchlist,
-                                 verbose = verbose, print_every_n = print_every_n,
-                                 early_stopping_rounds = early_stopping_rounds, maximize = TRUE,
-                                 save_period = save_period, save_name = save_name,
-                                 xgb_model = xgb_model)
   xgbmodel <- xgboost::xgb.train(params, dtrain, nrounds, watchlist,
                                  verbose = verbose, print_every_n = print_every_n,
                                  early_stopping_rounds = early_stopping_rounds, maximize = TRUE,
