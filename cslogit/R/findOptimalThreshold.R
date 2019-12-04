@@ -28,8 +28,7 @@ findOptimalThreshold <- function (scores, true_classes, metric, maximize, thresh
     stop("'show' must be TRUE or FALSE")
   }
 
-  metrics <- c("alerts", "alert_rate", "TP", "FP", "TN", "FN", "TPR", "FPR", "ER",
-               "Precision", "Recall", "F1")
+  metrics <- c("TPR", "FPR", "ER", "Precision", "Recall", "F1")
   cost_metrics <- c("detected_fraud_amount", "detected_fraud_amount_ratio", "cost",
                     "average_cost", "savings")
 

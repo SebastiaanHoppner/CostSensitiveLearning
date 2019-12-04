@@ -15,9 +15,7 @@
 \item{true_classes}{a vector of true labels. This can be either a factor or in numeric form.}
 
 \item{metric}{classification metric for which to find the optimal threshold. Options are:\cr
-\code{"alerts"},
-\code{"alert_rate"}, \code{"TP"}, \code{"FP"}, \code{"TN"}, \code{"FN"}, \code{"TPR"}, \code{"FPR"},
-\code{"ER"}, \code{"Precision"}, \code{"Recall"} and \code{"F1"}.\cr
+\code{"TPR"}, \code{"FPR"}, \code{"ER"}, \code{"Precision"}, \code{"Recall"} and \code{"F1"}.\cr
 If \code{cost_matrix} is supplied, then options for cost-related metrics are:\cr
 \code{"detected_fraud_amount"}, \code{"detected_fraud_amount_ratio"}, \code{"cost"},
 \code{"average_cost"} and \code{"savings".}}
