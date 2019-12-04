@@ -69,7 +69,7 @@ cslogit <- function (formula, data, cost_matrix, lambda, options = list()) {
   # fit instance-dependent cost-sensitive logistic regression
   if (options$print_level > 0) {
     cat("- Search for optimal regression parameters...\n\n")
-  } #(betas, lambda, X, tX, cost_matrix_col2, diff_costs)
+  }
   fit_reap <- reap(nloptr(x0               = options$start,
                           eval_f           = sower(computeObjectiveGradient),
                           lb               = options$lb,

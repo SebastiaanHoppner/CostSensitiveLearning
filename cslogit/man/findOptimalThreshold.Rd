@@ -6,7 +6,7 @@
 
 \description{Find the optimal decision threshold as the threshold that optimizes a chosen metric (see \code{\link{performance}} and \code{\link{costPerformance}}).}
 
-\usage{findOptimalThreshold(scores, true_classes, metric, maximize, thresholds,
+\usage{findOptimalThreshold(scores, true_classes, thresholds, metric,
                      cost_matrix = NULL, show = TRUE)}
 
 \arguments{
@@ -15,12 +15,9 @@
 \item{true_classes}{a vector of true labels. This can be either a factor or in numeric form.}
 
 \item{metric}{classification metric for which to find the optimal threshold. Options are:\cr
-\code{"TPR"}, \code{"FPR"}, \code{"ER"}, \code{"Precision"}, \code{"Recall"} and \code{"F1"}.\cr
+\code{"F1"}, \code{"ER"}, \code{"TPR"}, \code{"FPR"}, \code{"Precision"} and \code{"Recall"}.\cr
 If \code{cost_matrix} is supplied, then options for cost-related metrics are:\cr
-\code{"detected_fraud_amount"}, \code{"detected_fraud_amount_ratio"}, \code{"cost"},
-\code{"average_cost"} and \code{"savings".}}
-
-\item{maximize}{should the optimal threshold correspond with the maximum (\code{TRUE}) or minimum (\code{FALSE}) value of the metric.}
+\code{"savings"}, \code{"cost"}, \code{"average_cost"}\code{"detected_fraud_amount"} and \code{"detected_fraud_amount_ratio"}.}
 
 \item{thresholds}{sequence of threshold values.}
 
@@ -33,10 +30,11 @@ If \code{cost_matrix} is supplied, then options for cost-related metrics are:\cr
 
 \value{
 The \code{findOptimalThreshold} function returns a list containing the following components:
-\item{optimal_threshold}{the optimal threshold with the highest savings.}
-\item{savings}{the savings values matching the supplied thresholds.}
 \item{call}{the matched call.}
 \item{thresholds}{the sequence of thresholds supplied.}
+\item{measures}{the metric values matching the supplied thresholds.}
+\item{optimal_threshold}{the optimal threshold.}
+\item{optimal_measure}{the optimal metric value.}
 }
 
 \references{...}

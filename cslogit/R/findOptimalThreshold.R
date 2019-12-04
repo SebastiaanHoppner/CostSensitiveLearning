@@ -1,4 +1,4 @@
-findOptimalThreshold <- function (scores, true_classes, metric, maximize, thresholds,
+findOptimalThreshold <- function (scores, true_classes, thresholds, metric,
                                   cost_matrix = NULL, show = TRUE) {
   # original call
   call <- match.call()
@@ -13,9 +13,6 @@ findOptimalThreshold <- function (scores, true_classes, metric, maximize, thresh
   if (missing(metric)) {
     stop("argument 'metric' is missing, with no default")
   }
-  if (missing(maximize)) {
-    stop("argument 'maximize' is missing, with no default")
-  }
   if (missing(thresholds)) {
     stop("argument 'thresholds' is missing, with no default")
   }
@@ -28,9 +25,10 @@ findOptimalThreshold <- function (scores, true_classes, metric, maximize, thresh
     stop("'show' must be TRUE or FALSE")
   }
 
-  metrics <- c("TPR", "FPR", "ER", "Precision", "Recall", "F1")
-  cost_metrics <- c("detected_fraud_amount", "detected_fraud_amount_ratio", "cost",
-                    "average_cost", "savings")
+  # possible metrics
+  metrics <- c("F1", "ER", "TPR", "FPR", "Precision", "Recall")
+  cost_metrics <- c("savings", "cost", "average_cost",
+                    "detected_fraud_amount", "detected_fraud_amount_ratio")
 
   if (!metric %in% c(metrics, cost_metrics)) {
     stop("argument 'metric' is not specified correctly.\n",
@@ -54,7 +52,10 @@ findOptimalThreshold <- function (scores, true_classes, metric, maximize, thresh
                                                 true_classes, cost_matrix)[metric])
     }
   }
-  if (maximize){
+
+  # find optimal threshold value and corresponding metric value
+  if (metric %in% c("TPR", "Precision", "Recall", "F1", "savings",
+                    "detected_fraud_amount", "detected_fraud_amount_ratio")){
     optimal_threshold <- thresholds[which.max(measures)]
     optimal_measure <- max(measures)
   } else {
