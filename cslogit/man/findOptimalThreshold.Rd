@@ -17,13 +17,13 @@
 \item{metric}{classification metric for which to find the optimal threshold. Options are:\cr
 \code{"F1"}, \code{"ER"}, \code{"TPR"}, \code{"FPR"}, \code{"Precision"} and \code{"Recall"}.\cr
 If \code{cost_matrix} is supplied, then options for cost-related metrics are:\cr
-\code{"savings"}, \code{"cost"}, \code{"average_cost"}\code{"detected_fraud_amount"} and \code{"detected_fraud_amount_ratio"}.}
+\code{"savings"}, \code{"cost"}, \code{"average_cost"}, \code{"detected_fraud_amount"} and \code{"detected_fraud_amount_ratio"}.}
 
 \item{thresholds}{sequence of threshold values.}
 
 \item{cost_matrix}{a matrix of dimension \code{nrow(data)} x 2 (if provided). For each instance, the first/second column contains the cost of correctly/incorrectly predicting the binary class of the instance. Only needed if argument \code{metric} is a cost-related metric (default is NULL).}
 
-\item{show}{should the computed savings values be plotted against their corresponding thresholds (default is \code{TRUE}) or not (\code{FALSE}).}
+\item{show}{should the computed metric values be plotted against their corresponding thresholds (default is \code{TRUE}) or not (\code{FALSE}).}
 }
 
 \details{...}
