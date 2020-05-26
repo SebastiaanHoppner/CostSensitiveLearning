@@ -1,6 +1,5 @@
 csboost <- function (formula, train, test = NULL,
                      cost_matrix_train, cost_matrix_test = NULL,
-                     hessian_type, hessian_constant = NULL,
                      nrounds, params = list(),
                      verbose = 1, print_every_n = 1L, early_stopping_rounds = NULL,
                      save_period = NULL, save_name = "xgboost.model",
@@ -12,13 +11,13 @@ csboost <- function (formula, train, test = NULL,
   call <- match.call()
 
   # check inputs
-  check <- checkInputsCSboost(formula, train, test, cost_matrix_train, cost_matrix_test,
-                              hessian_type, hessian_constant)
+  check <- checkInputsCSboost(formula, train, test, cost_matrix_train, cost_matrix_test)
 
   # convert data to xgb.DMatrix & build watchlist
   labels_train <- hmeasure::relabel(model.response(check$mf_train))
   dtrain <- xgboost::xgb.DMatrix(data = model.matrix(formula, train), label = labels_train)
   watchlist <- list(train = dtrain)
+
   dtest <- NULL
   if (!is.null(test)) {
     labels_test <- hmeasure::relabel(model.response(check$mf_test))
@@ -29,12 +28,11 @@ csboost <- function (formula, train, test = NULL,
   # rearrange cost matrix & define auxilary vectors
   cost_matrix_train[labels_train == 0, ] <- cost_matrix_train[labels_train == 0, c(2, 1)]
   cost_matrix_train_col2 <- cost_matrix_train[, 2]
-  cost_no_model_train <- sum(cost_matrix_train_col2)
   diff_costs_train <- cost_matrix_train[, 1] - cost_matrix_train[, 2]
+
   if (!is.null(test)) {
     cost_matrix_test[labels_test == 0, ] <- cost_matrix_test[labels_test == 0, c(2, 1)]
     cost_matrix_test_col2 <- cost_matrix_test[, 2]
-    cost_no_model_test <- sum(cost_matrix_test_col2)
     diff_costs_test <- cost_matrix_test[, 1] - cost_matrix_test[, 2]
   }
 
@@ -46,46 +44,34 @@ csboost <- function (formula, train, test = NULL,
   names(dimnames(example_cost_matrix)) <- c("      Prediction", "Reference")
 
   # define objective function
-  averageExpectedCostObj <- function (scores, dtrain) {
+  AecGradHess <- function (scores, dtrain) {
     scores <- 1 / (1 + exp(-scores))
     grad <- scores * (1 - scores) * diff_costs_train
-    if (hessian_type == "exact") {
-      hess <- (1 - 2 * scores) * grad
-    } else if (hessian_type == "solution1") {
-      hess <- (1 - 2 * scores) * grad
-      hess[which(hess < 0)] <- 0
-    } else if (hessian_type == "solution2") {
-      hess <- abs((1 - 2 * scores) * grad)
-    } else if (hessian_type == "constant") {
-      hess <- rep(hessian_constant, length(scores))
-    }
+    hess <- abs((1 - 2 * scores) * grad)
     return(list(grad = grad, hess = hess))
   }
 
   # define evaluation function
-  expectedSavings <- function (scores, DMatrix) {
+  AEC <- function (scores, DMatrix) {
     scores <- 1 / (1 + exp(-scores))
     if (length(scores) == NROW(dtrain)) {
       cost_matrix_col2 <- cost_matrix_train_col2
-      cost_no_model <- cost_no_model_train
       diff_costs <- diff_costs_train
     } else if (length(scores) == NROW(dtest)) {
       cost_matrix_col2 <- cost_matrix_test_col2
-      cost_no_model <- cost_no_model_test
       diff_costs <- diff_costs_test
     }
-    expected_cost <- sum(cost_matrix_col2 + scores * diff_costs)
-    expected_savings <- (cost_no_model - expected_cost) / cost_no_model
-    return(list(metric = "expected savings", value = expected_savings))
+    average_expected_cost <- mean(cost_matrix_col2 + scores * diff_costs)
+    return(list(metric = "AEC", value = average_expected_cost))
   }
 
   # fit xgboost
-  params$objective <- averageExpectedCostObj
-  params$eval_metric <- expectedSavings
+  params$objective <- AecGradHess
+  params$eval_metric <- AEC
 
   xgbmodel <- xgboost::xgb.train(params, dtrain, nrounds, watchlist,
                                  verbose = verbose, print_every_n = print_every_n,
-                                 early_stopping_rounds = early_stopping_rounds, maximize = TRUE,
+                                 early_stopping_rounds = early_stopping_rounds, maximize = FALSE,
                                  save_period = save_period, save_name = save_name,
                                  xgb_model = xgb_model, ...)
 
@@ -94,8 +80,6 @@ csboost <- function (formula, train, test = NULL,
 
   # output
   xgbmodel$params <- c(xgbmodel$params, list(formula               = formula,
-                                             hessian_type          = hessian_type,
-                                             hessian_constant      = hessian_constant,
                                              nrounds               = nrounds,
                                              early_stopping_rounds = early_stopping_rounds,
                                              example_cost_matrix   = example_cost_matrix))

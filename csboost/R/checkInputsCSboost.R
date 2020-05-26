@@ -1,6 +1,5 @@
 checkInputsCSboost <- function (formula, train, test,
-                                cost_matrix_train, cost_matrix_test,
-                                hessian_type, hessian_constant) {
+                                cost_matrix_train, cost_matrix_test) {
   # check inputs
   if (missing(formula)) {
     stop("argument 'formula' is missing, with no default")
@@ -16,15 +15,6 @@ checkInputsCSboost <- function (formula, train, test,
     stop("argument 'cost_matrix_train' is missing, with no default")
   } else if (!is.matrix(cost_matrix_train) | any(dim(cost_matrix_train) != c(NROW(train), 2))) {
     stop("argument 'cost_matrix_train' must be a matrix of dimension nrow(train) x 2")
-  }
-  if (missing(hessian_type)) {
-    stop("argument 'hessian_type' is missing, with no default")
-  } else if (!hessian_type %in% c("exact", "solution1", "solution2", "constant")) {
-    stop("argument 'hessian_type' must be either 'exact', 'solution1', 'solution2' or 'constant'")
-  } else if (hessian_type == "constant") {
-    if (is.null(hessian_constant)) {
-      stop("'hessian_constant' must be specified when 'hessian_type' is 'constant'")
-    }
   }
   if (!is.null(test)) {
     if (!is.data.frame(test)) {

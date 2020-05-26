@@ -8,7 +8,6 @@
 
 \usage{csboost(formula, train, test = NULL,
         cost_matrix_train, cost_matrix_test = NULL,
-        hessian_type, hessian_constant = NULL,
         nrounds, params = list(),
         verbose = 1, print_every_n = 1L, early_stopping_rounds = NULL,
         save_period = NULL, save_name = "xgboost.model",
@@ -24,10 +23,6 @@
 \item{cost_matrix_train}{a matrix of dimension \code{nrow(train)} x 2. For each instance, the first/second column contains the cost of correctly/incorrectly predicting the binary class of the instance.}
 
 \item{cost_matrix_test}{a matrix of dimension \code{nrow(test)} x 2 (if provided). For each instance, the first/second column contains the cost of correctly/incorrectly predicting the binary class of the instance (default is \code{NULL}).}
-
-\item{hessian_type}{type of approach for calculating the second order gradient. Possible types are \code{"exact"}, \code{"solution1"}, \code{"solution2"} and \code{"constant"}.}
-
-\item{hessian_constant}{numeric value for the constant second order gradient when \code{hessian_type = "constant"}.}
 
 \item{nrounds}{max number of boosting iterations.}
 
@@ -80,13 +75,46 @@
 }
 }
 
-\references{...}
+\references{Hoppner, S., Baesens, B., Verbeke, W., and Verdonck, T. (2020). Instance- dependent cost-sensitive learning for detecting transfer fraud. \emph{arXiv:2005.02488}}
 
-\author{Sebastiaan Höppner}
+\author{Sebastiaan Hoppner}
 
 \seealso{\code{\link{summary.csboost}}, \code{\link{plot.csboost}}, \code{\link{predict.csboost}}}
 
 
 \examples{
-# Provide an example (TODO).
+library(csboost)
+data(creditcard)
+
+fixed_cost <- 50
+cost_matrix <- matrix(nrow = nrow(creditcard), ncol = 2)
+cost_matrix[, 1] <- ifelse(creditcard$Class == 1, fixed_cost, 0)
+cost_matrix[, 2] <- ifelse(creditcard$Class == 1, creditcard$Amount, fixed_cost)
+
+i0 <- which(creditcard$Class == 0)
+i1 <- which(creditcard$Class == 1)
+
+set.seed(2020)
+i0_train <- sample(i0, size = 0.7 * length(i0))
+i1_train <- sample(i1, size = 0.7 * length(i1))
+
+train <- creditcard[ c(i0_train, i1_train), ]
+test  <- creditcard[-c(i0_train, i1_train), ]
+
+cost_matrix_train <- cost_matrix[ c(i0_train, i1_train), ]
+cost_matrix_test  <- cost_matrix[-c(i0_train, i1_train), ]
+
+csbtree <- csboost(formula               = Class ~ . - 1,
+                   train                 = train,
+                   test                  = test,
+                   cost_matrix_train     = cost_matrix_train,
+                   cost_matrix_test      = cost_matrix_test,
+                   nrounds               = 300,
+                   early_stopping_rounds = 20,
+                   verbose               = 1,
+                   print_every_n         = 1)
+
+summary(csbtree)
+plot(csbtree)
+predict(csbtree, newdata = test)
 }
