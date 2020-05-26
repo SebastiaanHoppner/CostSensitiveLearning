@@ -3,7 +3,6 @@ importFrom("graphics", "abline", "boxplot", "legend", "lines", "par", "plot", "p
 importFrom("grDevices", "rainbow")
 importFrom("hmeasure", "HMeasure", "relabel")
 importFrom("nloptr", "nloptr")
-importFrom("PRROC", "pr.curve")
 importFrom("stats", "binomial", "delete.response", "glm.fit", "model.frame", "model.matrix", "model.response", "predict", "setNames")
 importFrom("utils", "setTxtProgressBar", "txtProgressBar")
 
@@ -13,9 +12,6 @@ export(summary.cslogit)
 export(predict.cslogit)
 export(plot.cslogit)
 export(plot.cv.cslogit)
-export(findOptimalThreshold)
-export(costPerformance)
-export(performance)
 
 S3method(plot, cslogit)
 S3method(plot, cv.cslogit)

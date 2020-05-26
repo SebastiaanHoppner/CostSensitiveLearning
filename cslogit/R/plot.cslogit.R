@@ -64,7 +64,8 @@ plot.cslogit <- function (x, which = "all", show_legend = FALSE, legend_position
       if (is.null(legend_position)) {
         legend_position <- ifelse(which.max(abs(ylimit)) == 1, "bottomleft", "topleft")
       }
-      legend(legend_position, colnames(x$betas_path), col = colors, lty = 1)
+      legend(legend_position, colnames(x$betas_path), lwd = 2, col = colors,
+             lty = c(2, rep(1, NCOL(x$betas_path) - 1)))
     }
     text(x = n, y = x$coefficients[1], label = "(Intercept)", pos = 3)
   }

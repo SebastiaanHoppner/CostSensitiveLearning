@@ -2,13 +2,13 @@ Package: cslogit
 Type: Package
 Title: Instance-dependent cost-sensitive logistic regression with lasso regularization
 Version: 1.0.0
-Author: Sebastiaan Höppner
-Maintainer: Sebastiaan Höppner <sebastiaan.hoppner@gmail.com>
+Author: Sebastiaan Hoppner
+Maintainer: Sebastiaan Hoppner <sebastiaan.hoppner@gmail.com>
 Description: Instance-dependent cost-sensitive logistic model. This method introduces instance-dependent costs into a lasso-regularized logistic regression by changing the objective function of the model to one that is cost-sensitive.
-Depends: R (>= 3.2.0)
-Imports: caret, hmeasure, nloptr, PRROC
+Depends: R (>= 3.5.0)
+Imports: caret, hmeasure, nloptr
 License: GPL (>= 2)
 LazyLoad: yes
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 NeedsCompilation: yes
