@@ -12,6 +12,7 @@ library(xgboost)
 library(gridExtra)
 library(lubridate)
 library(splitstackshape)
+library(PerformanceMetrics)
 
 
 
@@ -197,9 +198,8 @@ for (k_run in 1:nruns) {
     # Performance - - - - - - - - - - - - - - - -
     performanceMeasures <- function (scores, threshold, true_classes, cost_matrix) {
       predicted_classes <- ifelse(scores > threshold, 1, 0)
-      metrics      <-     cslogit::performance(scores, predicted_classes, true_classes)$metrics
-      cost_metrics <- cslogit::costPerformance(scores, predicted_classes, true_classes, cost_matrix)
-      return(cbind.data.frame(metrics, cost_metrics))
+      metrics <- performance(scores, predicted_classes, true_classes, cost_matrix, plot = FALSE)$metrics
+      return(metrics)
     }
     
     results_cslogit <- rbind.data.frame(results_cslogit, performanceMeasures(scores_cslogit_test, threshold_test, test$Class, cost_matrix_test))
@@ -261,7 +261,7 @@ createBoxplots <- function (df, ylabel, ylimit, average_measures) {
   boxplots <- ggplot(data = df, mapping = aes(x = method, y = measure, fill = method)) +
     stat_boxplot(geom = "errorbar", width = 0.4) + geom_boxplot() +
     ylab(ylabel) + xlab("") + ylim(ylimit) + scale_x_discrete(limits = unique(df$method)) +
-    stat_summary(fun.y = mean, geom = "point", shape = 18, size = 5, col = "black") +
+    stat_summary(fun = mean, geom = "point", shape = 18, size = 5, col = "black") +
     geom_text(data = data.frame(method = unique(df$method), average_measures = average_measures),
               mapping = aes(x = method, y = min(ylimit, na.rm = TRUE),
                             label = label_average), size = 5,
@@ -272,18 +272,18 @@ createBoxplots <- function (df, ylabel, ylimit, average_measures) {
 
 
 box_savings <- createBoxplots(ylabel = "Savings (%)",
-                              df = data.frame(measure = 100 * results$savings,
+                              df = data.frame(measure = 100 * results$Savings,
                                               method  = results$method),
-                              ylimit = c(100 * min(results$savings, na.rm = TRUE) - 10,
-                                         min(100 * max(results$savings, na.rm = TRUE) + 10, 100)),
-                              average_measures = 100 * average_results$savings)
+                              ylimit = c(100 * min(results$Savings, na.rm = TRUE) - 10,
+                                         min(100 * max(results$Savings, na.rm = TRUE) + 10, 100)),
+                              average_measures = 100 * average_results$Savings)
 
 box_expected_savings <- createBoxplots(ylabel = "Expected savings (%)",
-                                       df = data.frame(measure = 100 * results$expected_savings,
+                                       df = data.frame(measure = 100 * results$ExpectedSavings,
                                                        method  = results$method),
-                                       ylimit = c(100 * min(results$expected_savings, na.rm = TRUE) - 10,
-                                                  min(100 * max(results$expected_savings, na.rm = TRUE) + 10, 100)),
-                                       average_measures = 100 * average_results$expected_savings)
+                                       ylimit = c(100 * min(results$ExpectedSavings, na.rm = TRUE) - 10,
+                                                  min(100 * max(results$ExpectedSavings, na.rm = TRUE) + 10, 100)),
+                                       average_measures = 100 * average_results$ExpectedSavings)
 
 box_precision <- createBoxplots(ylabel = "Precision (%)",
                                 df = data.frame(measure = 100 * results$Precision,
