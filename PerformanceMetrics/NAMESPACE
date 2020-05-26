@@ -1,0 +1,15 @@
+importFrom("graphics", "fourfoldplot", "grid", "lines", "par", "plot", "points", "segments", "text")
+importFrom("grDevices", "chull")
+importFrom("stats", "density")
+
+export(performance)
+export(plot.performance)
+export(print.performance)
+export(findOptimalThreshold)
+export(plot.findOptimalThreshold)
+export(print.findOptimalThreshold)
+
+S3method(plot, performance)
+S3method(print, performance)
+S3method(plot, findOptimalThreshold)
+S3method(print, findOptimalThreshold)
