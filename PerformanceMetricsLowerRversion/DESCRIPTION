@@ -1,0 +1,12 @@
+Package: PerformanceMetricsLowerRVersion
+Type: Package
+Title: Performance measurement and threshold tuning for binary classification
+Version: 1.0.0
+Author: Sebastiaan Hoppner
+Maintainer: Sebastiaan Hoppner <sebastiaan.hoppner@gmail.com>
+Description: Performance measurement and threshold tuning for binary classification.
+Depends: R (>= 3.4.0)
+License: GPL (>= 2)
+LazyLoad: yes
+Encoding: UTF-8
+NeedsCompilation: yes
